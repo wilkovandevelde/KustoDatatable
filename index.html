@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KustoDatatable</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🟦</text></svg>">
+  <style>
+    :root {
+      --bg-light: #f4f4f4;
+      --text-light: #000;
+      --bg-dark: #1e1e1e;
+      --text-dark: #ddd;
+      --accent: #4caf50;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    h1 { margin-bottom: 0; }
+    .subtitle {
+      font-size: 0.95rem;
+      color: gray;
+      margin-top: 0;
+    }
+
+   
+    textarea, input {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+      font-size: 0.95rem;
+      background-color: #fff;
+      color: #000;
+    }
+
+    body.dark textarea, body.dark input {
+      background-color: #2e2e2e;
+      color: #ddd;
+      border: 1px solid #555;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background-color: var(--accent);
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: default;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 1rem;
+    }
+
+    .top-bar {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .top-bar a svg { fill: currentColor; }
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: inherit;
+      display: flex;
+      align-items: center;
+    }
+
+    .code-container {
+      position: relative;
+      margin-top: 1rem;
+    }
+
+    .code-output {
+      font-family: Consolas, monospace;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #fff;
+      color: #000;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    body.dark .code-output {
+      background-color: #2e2e2e;
+      border: 1px solid #555;
+      color: #ddd;
+    }
+
+    .kql-keyword { color: #0000ff; font-weight: bold; }
+    .kql-function { color: #267f99; }
+    .kql-string { color: #a31515; }
+
+    .copy-wrapper {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      display: flex;
+      align-items: center;
+      background-color: #e0e0e0;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      padding: 2px 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      gap: 4px;
+      color: #000;
+    }
+
+    body.dark .copy-wrapper {
+      background-color: #444;
+      border: 1px solid #666;
+      color: #fff;
+    }
+
+    .copy-wrapper:hover { background-color: #ccc; }
+    body.dark .copy-wrapper:hover { background-color: #555; }
+
+    .copy-wrapper svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    .copy-success {
+      color: var(--accent);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .count-display {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    body.dark .count-display {
+      color: #bbb;
+    }
+
+    #input {
+      min-height: 140px;
+    }
+
+    #input.dragover {
+      border: 2px dashed var(--accent);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    #downloadBtn {
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <a href="https://github.com/wilkovandevelde/KustoDatatable" target="_blank" title="GitHub Repository">
+      <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 16 16">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 
+          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+          -.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78
+          -.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.01.08-2.11 0 0 .67-.21
+          2.2.82a7.7 7.7 0 0 1 2.01-.27c.68 0 1.36.09 2.01.27 1.53-1.04 2.2-.82
+          2.2-.82.44 1.1.16 1.91.08 2.11.51.56.82 1.27.82 2.15 0 3.07-1.87 
+          3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 
+          8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+    </a>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+      <span id="theme-icon">🌙</span>
+    </button>
+  </div>
+
+  <h1>KustoDatatable</h1>
+  <p class="subtitle">KQL datatable generator<br/>
+    Currently supports string, int, long, real, decimal and datetime</p>
+
+  <label for="varName">Datatable variable name:</label>
+  <input type="text" id="varName" value="MyDatatable">
+
+  <label for="input">Columns:</label>
+  <input  type="text" id="input_columns" placeholder="Date:datetime, Event:string">
+
+  <label for="input">Paste values (or drop CSV file):</label>
+  <textarea id="input_values" placeholder="1910-06-11; Born&#10;1930-01-01; &quot;Enters Ecole Navale&quot;&#10;1953-01-01; &quot;Published first book&quot;&#10;1997-06-25; Died"></textarea>
+
+  <div class="btn-group">
+    <button onclick="generateKQL()">Generate KQL</button>
+    <button onclick="resetForm()">Reset</button>
+  </div>
+
+  <div class="count-display" id="countDisplay"></div>
+
+  <h3>Output:</h3>
+  <div class="code-container">
+    <div id="highlightedOutput" class="code-output"></div>
+    <div class="copy-wrapper" onclick="copyOutput()" title="Copy to clipboard">
+      <svg viewBox="0 0 24 24">
+        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 18H8V7h11v16z"/>
+      </svg>
+      <span>Copy</span>
+    </div>
+  </div>
+
+  <button id="downloadBtn" onclick="downloadKQL()" disabled>Download .kql</button>
+  <div id="copyStatus" class="copy-success"></div>
+
+  <script>
+    function setThemeIcon() {
+      document.getElementById("theme-icon").textContent =
+        document.body.classList.contains("dark") ? "☀️" : "🌙";
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      document.body.classList.toggle("light");
+      localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+      setThemeIcon();
+    }
+
+    function generateKQL() {
+      const varName = document.getElementById('varName').value.trim() || "MyDatatable";
+      const input_columns = document.getElementById('input_columns').value;
+      const input_values = document.getElementById('input_values').value;
+      const rows = formatRow(input_values.split('\n').map(l => l.trim()).filter(Boolean));
+
+      const values_rows = rows.map(r => r.split(/[;]/).map((v,i) => formatRow(v.trim(),i)).join(','))
+      const raw = values_rows.join(',\n');
+      const rawKql = `let ${varName} = datatable(${input_columns}) [\n${raw}\n];`;
+      const html = `<span class="kql-keyword">let</span> <span class="kql-function">${varName}</span> = <span class="kql-function">datatable(${input_columns})</span>[<br/>${values_rows.join(',<br>')}<br/>];`;
+
+      document.getElementById('highlightedOutput').innerHTML = html;
+      document.getElementById('highlightedOutput').setAttribute('data-raw', rawKql);
+      document.getElementById('countDisplay').textContent = `Total rows: ${values_rows.length}`;
+      document.getElementById('copyStatus').textContent = '';
+
+      const dl = document.getElementById('downloadBtn');
+      dl.disabled = false;
+    }
+
+    function formatRow(row, index) {
+      const inputColumns = document.getElementById('input_columns').value.trim();
+      const columns = inputColumns.split(',').map(col => col.trim());
+      const column = columns[index];
+
+      if (!column) return row;
+
+      const parts = column.split(':');
+      if (parts.length < 2) return row;
+
+      const currentType = parts[1].toLowerCase();
+      
+      switch (currentType) {
+        case "string":
+          row = addQuotesIfMissing(row);
+          break;
+        case "datetime":
+          row = `datetime(${row})`;
+          break;
+        case "int":
+        case "long":
+        case "real":
+        case "decimal":
+          row = row.replace(/"/g, '').replace(',', '.');
+          break;
+      }
+
+      return row;
+    }
+
+    function addQuotesIfMissing(str) {
+      const trimmed = str.trim();
+      const hasStartQuote = trimmed.startsWith('"');
+      const hasEndQuote = trimmed.endsWith('"');
+
+      if (hasStartQuote) str = str.replace(/^"/, '');
+      if (hasEndQuote) str = str.replace(/"$/, '');
+
+      str = str.replace(/"/g, '\\"')
+
+      return `"${str}"`;
+    }
+
+
+    function downloadKQL() {
+      const varName = document.getElementById('varName').value.trim() || "MyDatatable";
+      const content = document.getElementById('highlightedOutput').getAttribute('data-raw');
+      const blob = new Blob([content], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${varName}.kql`;
+      link.click();
+    }
+
+    function resetForm() {
+      document.getElementById('varName').value = "MyDatatable";
+      document.getElementById('input_columns').value = "";
+      document.getElementById('input_values').value = "";
+      document.getElementById('highlightedOutput').innerHTML = "";
+      document.getElementById('countDisplay').textContent = "";
+      document.getElementById('copyStatus').textContent = "";
+      document.getElementById('downloadBtn').disabled = true;
+    }
+
+    function copyOutput() {
+      const raw = document.getElementById("highlightedOutput").getAttribute("data-raw");
+      navigator.clipboard.writeText(raw).then(() => {
+        const status = document.getElementById("copyStatus");
+        status.textContent = "Copied to clipboard!";
+        setTimeout(() => status.textContent = '', 2000);
+      });
+    }
+
+    document.getElementById("input_values").addEventListener("dragover", e => {
+      e.preventDefault();
+      e.target.classList.add("dragover");
+    });
+
+    document.getElementById("input_values").addEventListener("dragleave", e => {
+      e.target.classList.remove("dragover");
+    });
+
+    document.getElementById("input_values").addEventListener("drop", e => {
+      e.preventDefault();
+      e.target.classList.remove("dragover");
+      const file = e.dataTransfer.files[0];
+      if (file && file.name.endsWith(".csv")) {
+        const reader = new FileReader();
+        reader.onload = evt => {
+          const lines = evt.target.result.split("\n").map(l => l.split(",")[0].trim()).filter(Boolean);
+          document.getElementById("input_values").value = lines.join("\n");
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const theme = localStorage.getItem("theme") || "light";
+      document.body.classList.add(theme);
+      setThemeIcon();
+    });
+  </script>
+
+</body>
+</html>
