@@ -389,7 +389,7 @@
       const parts = column.split(':');
       if (parts.length < 2) return row;
 
-      const currentType = parts[1].toLowerCase();
+      const currentType = parts[1].toLowerCase().trim();
       
       switch (currentType) {
         case "string":
@@ -402,7 +402,7 @@
         case "long":
         case "real":
         case "decimal":
-          row = removeStartAndEndQuotes(row).replace(/"/g, '').replace(',', '.');
+          row = removeStartAndEndQuotes(row).replace(',', '.');
           break;
       }
 
