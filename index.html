@@ -393,33 +393,39 @@
       
       switch (currentType) {
         case "string":
-          row = addQuotesIfMissing(row);
+          row = addQuotes(row);
           break;
         case "datetime":
-          row = `datetime(${row})`;
+          row = `datetime(${removeStartAndEndQuotes(row)})`;
           break;
         case "int":
         case "long":
         case "real":
         case "decimal":
-          row = row.replace(/"/g, '').replace(',', '.');
+          row = removeStartAndEndQuotes(row).replace(/"/g, '').replace(',', '.');
           break;
       }
 
       return row;
     }
 
-    function addQuotesIfMissing(str) {
+    function addQuotes(str) {
+      str = removeStartAndEndQuotes(str)
+
+      str = str.replace(/"/g, '\\"')
+
+      return `"${str}"`;
+    }
+
+    function removeStartAndEndQuotes(str) {
       const trimmed = str.trim();
       const hasStartQuote = trimmed.startsWith('"');
       const hasEndQuote = trimmed.endsWith('"');
 
       if (hasStartQuote) str = str.replace(/^"/, '');
-      if (hasEndQuote) str = str.replace(/"$/, '');
+      if (hasEndQuote) str = str.replace(/"$/, '');      
 
-      str = str.replace(/"/g, '\\"')
-
-      return `"${str}"`;
+      return str;
     }
 
 
